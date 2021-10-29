@@ -28,7 +28,6 @@ class BubbleView @JvmOverloads constructor(
     }
 
     init {
-    setImageResource(R.mipmap.ic_launcher_round)
         bubbleParams = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,

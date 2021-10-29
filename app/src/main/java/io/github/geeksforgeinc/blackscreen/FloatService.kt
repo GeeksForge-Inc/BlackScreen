@@ -6,12 +6,17 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
+import android.view.WindowManager
 import androidx.core.content.ContextCompat
 
 
 class FloatService : Service() {
     companion object {
         const val FOREGROUND_SERVICE_REQUEST_ID = 2
+    }
+
+    private val layoutInflater by lazy {
+        getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return if (startId == START_STICKY) {
@@ -36,8 +41,8 @@ class FloatService : Service() {
     }
 
     private fun initialiseView() {
-        val bubbleView = BubbleView(this)
-        val bubbleRemoverView = BubbleRemoverView(this)
+        val bubbleView = layoutInflater.inflate(R.layout.view_bubble, null) as BubbleView
+        val bubbleRemoverView = layoutInflater.inflate(R.layout.view_bubble_remover, null) as BubbleRemoverView
         val blackScreenView = BlackScreenView(this)
 
         bubbleView.setOnTouchListener(BubbleTouchListener(this, bubbleRemoverView) {

@@ -53,7 +53,6 @@ object NotificationUtils {
     }
 
     private fun getNotificationIcon(): Int {
-       // TODO ADD app icon
-        return R.mipmap.ic_launcher_round
+        return R.mipmap.ic_launcher
     }
 }

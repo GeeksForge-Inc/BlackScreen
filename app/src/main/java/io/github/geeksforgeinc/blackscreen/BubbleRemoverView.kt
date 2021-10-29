@@ -25,8 +25,6 @@ class BubbleRemoverView @JvmOverloads constructor(
     }
 
     init {
-        setImageResource(R.mipmap.ic_launcher_round)
-        setPadding(10, 10, 10,10)
         bubbleRemoverParams  = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
