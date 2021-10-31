@@ -1,34 +1,50 @@
-package io.github.geeksforgeinc.blackscreen
+package io.github.geeksforgeinc.blackscreen.ui.activity
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
-import androidx.core.content.ContextCompat
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import dagger.hilt.android.AndroidEntryPoint
+import io.github.geeksforgeinc.blackscreen.R
 import io.github.geeksforgeinc.blackscreen.databinding.ActivityMainBinding
+import io.github.geeksforgeinc.blackscreen.service.FloatService
+import io.github.geeksforgeinc.blackscreen.utils.isSilent
+import io.github.geeksforgeinc.blackscreen.utils.setChecked
+import io.github.geeksforgeinc.blackscreen.viewmodel.BlackScreenViewModel
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     companion object {
         private const val REQUEST_CODE = 100
     }
     private lateinit var binding : ActivityMainBinding
+    private val viewModel : BlackScreenViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        binding.button.setOnClickListener{
-            if (requestPermission(REQUEST_CODE)) {
-                return@setOnClickListener
-            }
-            showServiceFloat()
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        viewModel.floatServiceEnabledLiveData.observe(this) {
+            binding.button.setChecked(it, true)
         }
-    }
+        binding.button.setOnCheckedChangeListener { toggleButton, isChecked ->
+            if (!toggleButton.isSilent) {
+                viewModel.setFloatServiceEnabled(isChecked)
+                if (isChecked) {
+                    if (requestPermission(REQUEST_CODE)) {
+                        return@setOnCheckedChangeListener
+                    }
+                    FloatService.startService(this)
+                } else {
+                    FloatService.stopService(this)
+                }
 
-    private fun showServiceFloat() {
-        ContextCompat.startForegroundService(this, Intent(this, FloatService::class.java))
+            }
+        }
     }
 
     private fun requestPermission(requestCode: Int): Boolean {
@@ -52,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                 Handler().postDelayed({
                     if (Settings.canDrawOverlays(this)) {
                         when (requestCode) {
-                            REQUEST_CODE -> showServiceFloat()
+                            REQUEST_CODE -> FloatService.startService(this)
                         }
                     }
                 }, 500)

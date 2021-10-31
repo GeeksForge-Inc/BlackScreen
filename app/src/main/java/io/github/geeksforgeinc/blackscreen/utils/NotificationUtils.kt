@@ -1,4 +1,4 @@
-package io.github.geeksforgeinc.blackscreen;
+package io.github.geeksforgeinc.blackscreen.utils;
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -8,6 +8,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import io.github.geeksforgeinc.blackscreen.R
 
 object NotificationUtils {
     const val NOTIFICATION_ID = 2332

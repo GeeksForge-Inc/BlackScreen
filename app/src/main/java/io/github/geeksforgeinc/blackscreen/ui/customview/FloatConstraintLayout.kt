@@ -1,25 +1,24 @@
-package io.github.geeksforgeinc.blackscreen
+package io.github.geeksforgeinc.blackscreen.ui.customview
 
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
 import android.util.AttributeSet
-import android.view.*
-import android.widget.LinearLayout
-import io.github.geeksforgeinc.blackscreen.databinding.ViewBlackScreenBinding
+import android.view.Gravity
+import android.view.View
+import android.view.WindowInsets
+import android.view.WindowManager
+import androidx.constraintlayout.widget.ConstraintLayout
 
 
-class BlackScreenView @JvmOverloads constructor(
+class FloatConstraintLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
     private var paramFloat : WindowManager.LayoutParams
     private val windowManager by lazy {
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    }
-    private val layoutInflater by lazy {
-        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     }
 
     private val type: Int =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -29,8 +28,6 @@ class BlackScreenView @JvmOverloads constructor(
     }
 
     init {
-        ViewBlackScreenBinding.inflate(layoutInflater, this, true)
-
         paramFloat = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,

@@ -1,4 +1,4 @@
-package io.github.geeksforgeinc.blackscreen
+package io.github.geeksforgeinc.blackscreen.ui.customview
 
 import android.content.Context
 import android.graphics.PixelFormat
@@ -36,13 +36,13 @@ class BubbleRemoverView @JvmOverloads constructor(
     }
 
     fun hide() {
-        if (isVisible()) {
+        if (isAttachedToWindow) {
             windowManager.removeViewImmediate(this)
         }
     }
 
     fun show() {
-        if (!isVisible()) {
+        if (!isAttachedToWindow) {
             windowManager.addView(this, bubbleRemoverParams)
         }
     }

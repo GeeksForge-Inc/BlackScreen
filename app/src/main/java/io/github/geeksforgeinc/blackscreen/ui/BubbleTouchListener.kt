@@ -1,11 +1,11 @@
-package io.github.geeksforgeinc.blackscreen
+package io.github.geeksforgeinc.blackscreen.ui
 
 import android.content.Context
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import io.github.geeksforgeinc.blackscreen.ui.customview.BubbleView
+import io.github.geeksforgeinc.blackscreen.ui.customview.BubbleRemoverView
 import kotlin.math.sqrt
 
 /**
@@ -79,12 +79,13 @@ class BubbleTouchListener(
                 pressedY = event.y
                 stayedWithinClickDistance = true
                 // add recycle bin when moving crumpled paper
-                bubbleRemover.show()
+                bubbleRemover.visibility = View.VISIBLE
             }
             MotionEvent.ACTION_UP -> {
 
                 if (isViewsOverlapping(bubble, bubbleRemover)) {
                     bubble.hide()
+                    bubbleRemover.hide()
                     onBubbleRemoved()
                 } else {
                     val pressDuration: Long = System.currentTimeMillis() - pressStartTime
@@ -97,11 +98,12 @@ class BubbleTouchListener(
                 }
 
                 // always remove recycle bin ImageView when paper is dropped
-                bubbleRemover.hide()
+                bubbleRemover.visibility = View.GONE
             }
             MotionEvent.ACTION_MOVE -> {
                 if (stayedWithinClickDistance &&
-                    distance(context, pressedX, pressedY, event.x, event.y) > MAX_CLICK_DISTANCE) {
+                    distance(context, pressedX, pressedY, event.x, event.y) > MAX_CLICK_DISTANCE
+                ) {
                     stayedWithinClickDistance = false;
                 }
                 val xDiffMove: Int = xCord - xInitCord

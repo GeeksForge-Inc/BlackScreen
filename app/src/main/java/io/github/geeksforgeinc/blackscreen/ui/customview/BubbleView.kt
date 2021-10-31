@@ -1,13 +1,11 @@
-package io.github.geeksforgeinc.blackscreen
+package io.github.geeksforgeinc.blackscreen.ui.customview
 
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
 import android.util.AttributeSet
-import android.util.DisplayMetrics
-import android.util.Log
-import android.view.*
-import android.widget.ImageView
+import android.view.Gravity
+import android.view.WindowManager
 import androidx.appcompat.widget.AppCompatImageView
 
 
