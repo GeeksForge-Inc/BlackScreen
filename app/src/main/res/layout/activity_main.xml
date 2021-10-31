@@ -11,6 +11,8 @@
       android:id="@+id/button"
       android:layout_width="200dp"
       android:layout_height="200dp"
+      android:textOff="Enable"
+      android:textOn="Disable"
       android:background="@drawable/toggle_background"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintLeft_toLeftOf="parent"

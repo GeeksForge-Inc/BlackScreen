@@ -1,5 +1,7 @@
 package io.github.geeksforgeinc.blackscreen.ui.activity
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -24,12 +26,14 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var binding : ActivityMainBinding
     private val viewModel : BlackScreenViewModel by viewModels()
-
+    private lateinit var objectAnimator: ObjectAnimator
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        setupPulseAnimation()
         viewModel.floatServiceEnabledLiveData.observe(this) {
             binding.button.setChecked(it, true)
+            animateToggleButton(!it)
         }
         binding.button.setOnCheckedChangeListener { toggleButton, isChecked ->
             if (!toggleButton.isSilent) {
@@ -43,6 +47,28 @@ class MainActivity : AppCompatActivity() {
                     FloatService.stopService(this)
                 }
 
+            }
+        }
+    }
+
+    private fun setupPulseAnimation() {
+        objectAnimator = ObjectAnimator.ofPropertyValuesHolder(
+            binding.button,
+            PropertyValuesHolder.ofFloat("scaleX", 1.05f),
+            PropertyValuesHolder.ofFloat("scaleY", 1.05f)
+        )
+        objectAnimator.duration = 800
+
+        objectAnimator.repeatCount = ObjectAnimator.INFINITE;
+        objectAnimator.repeatMode = ObjectAnimator.REVERSE;
+    }
+
+    private fun animateToggleButton(isPulseAnimatedStarted : Boolean) {
+        if (isPulseAnimatedStarted) {
+            objectAnimator.start()
+        } else {
+            if (objectAnimator.isRunning) {
+                objectAnimator.cancel()
             }
         }
     }
