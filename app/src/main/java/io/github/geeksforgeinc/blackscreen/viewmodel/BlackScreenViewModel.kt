@@ -1,18 +1,13 @@
 package io.github.geeksforgeinc.blackscreen.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.geeksforgeinc.blackscreen.data.PreferencesManager
-import kotlinx.coroutines.launch
+import io.github.geeksforgeinc.blackscreen.service.FloatServiceManager
 import javax.inject.Inject
 
 @HiltViewModel
-class BlackScreenViewModel @Inject constructor(private val preferencesManager : PreferencesManager) : ViewModel() {
-    val floatServiceEnabledLiveData = preferencesManager.isFloatServiceEnabled().asLiveData()
+class BlackScreenViewModel @Inject constructor(private val floatServiceManager: FloatServiceManager) : ViewModel() {
+    val floatServiceEnabledLiveData = floatServiceManager.serviceStatusLiveData
 
-    fun setFloatServiceEnabled(isFloatServiceEnabled : Boolean) = viewModelScope.launch {
-        preferencesManager.setFloatServiceEnabled(isFloatServiceEnabled)
-    }
+    fun setFloatServiceEnabled(isFloatServiceEnabled : Boolean) = floatServiceManager.updateServiceStatus(isFloatServiceEnabled)
 }

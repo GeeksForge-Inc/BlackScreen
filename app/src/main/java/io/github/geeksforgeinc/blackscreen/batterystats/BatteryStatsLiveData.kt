@@ -1,9 +1,8 @@
-package io.github.geeksforgeinc.blackscreen.service
+package io.github.geeksforgeinc.blackscreen.batterystats
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.github.geeksforgeinc.blackscreen.batterystats.BatteryStatsManager
 import io.github.geeksforgeinc.blackscreen.data.model.BatteryState
 
 class BatteryStatsLiveData(@ApplicationContext private val context: Context) : LiveData<BatteryState>() {

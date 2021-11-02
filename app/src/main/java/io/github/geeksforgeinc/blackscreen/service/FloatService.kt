@@ -2,22 +2,19 @@ package io.github.geeksforgeinc.blackscreen.service
 
 import android.content.Context
 import android.content.Intent
+import android.os.IBinder
 import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.geeksforgeinc.blackscreen.R
-import io.github.geeksforgeinc.blackscreen.data.PreferencesManager
+import io.github.geeksforgeinc.blackscreen.batterystats.BatteryStatsLiveData
 import io.github.geeksforgeinc.blackscreen.data.model.BatteryState
 import io.github.geeksforgeinc.blackscreen.databinding.ViewBlackScreenBinding
 import io.github.geeksforgeinc.blackscreen.ui.BubbleTouchListener
 import io.github.geeksforgeinc.blackscreen.ui.customview.BubbleRemoverView
 import io.github.geeksforgeinc.blackscreen.ui.customview.BubbleView
 import io.github.geeksforgeinc.blackscreen.utils.NotificationUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,10 +40,9 @@ class FloatService : LifecycleService() {
         }
     }
 
+    var isFirstRun = true
     @Inject
-    lateinit var preferencesManager : PreferencesManager
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    lateinit var serviceManager : FloatServiceManager
     private lateinit var bubbleView : BubbleView
     private lateinit var bubbleRemoverView : BubbleRemoverView
     private lateinit var blackScreenBinding :  ViewBlackScreenBinding
@@ -60,19 +56,20 @@ class FloatService : LifecycleService() {
         batteryStatsLiveData = BatteryStatsLiveData(this.applicationContext)
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
         when (intent?.action) {
                 ACTION_START_FOREGROUND_SERVICE -> {
-                    startForegroundService()
-                    initialiseView()
-
+                    if (isFirstRun) {
+                        isFirstRun = false
+                        startForegroundService()
+                        initialiseView()
+                    }
                 }
                 ACTION_STOP_FOREGROUND_SERVICE -> {
                     cleanupViews()
                     stopForegroundService()
                 }
             }
-            return START_NOT_STICKY
+            return super.onStartCommand(intent, flags, startId)
     }
 
     private fun startForegroundService() {
@@ -107,10 +104,8 @@ class FloatService : LifecycleService() {
         bubbleRemoverView = layoutInflater.inflate(R.layout.view_bubble_remover, null) as BubbleRemoverView
         blackScreenBinding = ViewBlackScreenBinding.inflate(layoutInflater)
         bubbleView.setOnTouchListener(BubbleTouchListener(this, bubbleRemoverView) {
-            scope.launch {
-                preferencesManager.setFloatServiceEnabled(false)
-                stopForegroundService()
-            }
+            serviceManager.updateServiceStatus(false)
+            stopForegroundService()
         })
         if (!bubbleView.isVisible() && !blackScreenBinding.blackScreen.isVisible()) {
             bubbleRemoverView.show()
@@ -132,8 +127,8 @@ class FloatService : LifecycleService() {
     }
 
 
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
+        return null
     }
 }
